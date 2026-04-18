@@ -19,5 +19,5 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
-  base: mode === "production" ? "/Kadambam_Builders_2/" : "/",
+  base: mode === "production" ? "/" : "/",
 }));

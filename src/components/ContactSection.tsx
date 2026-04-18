@@ -63,7 +63,7 @@ const ContactSection = () => {
             {/* Map */}
             <div className="rounded-lg overflow-hidden aspect-video">
               <iframe
-                src="https://www.google.com/maps/place/8%C2%B043'09.8%22N+77%C2%B045'30.9%22E/@8.7193737,77.7560158,17z/data=!3m1!4b1!4m4!3m3!8m2!3d8.7193737!4d77.7585907?hl=en&entry=ttu&g_ep=EgoyMDI2MDQxNS4wIKXMDSoASAFQAw%3D%3D"
+                src="https://www.google.com/maps?q=8.7193737,77.7585907&hl=en&z=17&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
