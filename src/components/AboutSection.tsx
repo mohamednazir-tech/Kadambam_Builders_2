@@ -1,20 +1,63 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Target, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getAboutContent, defaultAboutContent, type AboutContent } from "@/lib/about";
+import { supabase } from "@/lib/supabase";
 
 const AboutSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const [aboutContent, setAboutContent] = useState<AboutContent>(defaultAboutContent);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadContent = async () => {
+    try {
+      const data = await getAboutContent();
+      if (data) {
+        setAboutContent(data);
+      }
+    } catch (error) {
+      console.error('Error loading about content:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Initial load
+    loadContent();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('about-changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'about_content' 
+        },
+        (payload) => {
+          console.log('About content changed:', payload);
+          loadContent(); // Reload content when database changes
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     <section id="about" className="section-padding bg-background">
       <div ref={ref} className={`container mx-auto max-w-4xl ${isVisible ? "animate-fade-up" : "opacity-0"}`}>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-4">
-          About <span className="text-gold">Kadambam Builders</span>
+          {aboutContent.title}
         </h2>
         <div className="w-16 h-1 bg-gold mx-auto mb-8 rounded-full" />
         <p className="text-muted-foreground text-center text-base md:text-lg mb-12 leading-relaxed">
-          Based in Rahmath Nagar, Chennai, Kadambam Builders is a trusted name in construction, known for
-          delivering high-quality residential and commercial projects. With years of expertise and a commitment
-          to excellence, we turn your vision into reality — on time and within budget.
+          {aboutContent.description}
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -23,10 +66,9 @@ const AboutSection = () => {
               <Target className="text-gold" size={24} />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Our Mission</h3>
+              <h3 className="font-semibold text-foreground mb-2">{aboutContent.mission_title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Deliver affordable and high-quality construction solutions that exceed expectations, ensuring
-                every project is built with integrity and precision.
+                {aboutContent.mission_description}
               </p>
             </div>
           </div>
@@ -35,10 +77,9 @@ const AboutSection = () => {
               <Eye className="text-gold" size={24} />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Our Vision</h3>
+              <h3 className="font-semibold text-foreground mb-2">{aboutContent.vision_title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Become the most trusted and preferred builder in Chennai, recognised for quality craftsmanship,
-                transparency, and customer satisfaction.
+                {aboutContent.vision_description}
               </p>
             </div>
           </div>

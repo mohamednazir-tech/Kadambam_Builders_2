@@ -13,12 +13,12 @@ export interface Project {
 }
 
 const defaultProjects: Project[] = [
-  { id: "1", src: project1, label: "Residential Villa", category: "Residential" },
-  { id: "2", src: project2, label: "Commercial Complex", category: "Commercial" },
-  { id: "3", src: project3, label: "Kitchen Renovation", category: "Renovation" },
-  { id: "4", src: project4, label: "Luxury Apartments", category: "Residential" },
-  { id: "5", src: project5, label: "Modern Duplex", category: "Residential" },
-  { id: "6", src: project6, label: "Interior Design", category: "Interior" },
+  { id: "1", src: project1, label: "2BHK House Construction in Palayamkottai, Tirunelveli", category: "Residential" },
+  { id: "2", src: project2, label: "Commercial Shop in Tirunelveli Town - 800 sq.ft", category: "Commercial" },
+  { id: "3", src: project3, label: "Kitchen Renovation in Tirunelveli - Modern Design", category: "Renovation" },
+  { id: "4", src: project4, label: "Luxury Villa in Tirunelveli - 2000 sq.ft", category: "Residential" },
+  { id: "5", src: project5, label: "Modern Duplex House in Tirunelveli", category: "Residential" },
+  { id: "6", src: project6, label: "Interior Design Project in Tirunelveli", category: "Interior" },
 ];
 
 const STORAGE_KEY = "kadambam_projects";

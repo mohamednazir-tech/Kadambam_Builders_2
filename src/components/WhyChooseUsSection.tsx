@@ -2,10 +2,10 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { MapPin, Clock, ShieldCheck, IndianRupee } from "lucide-react";
 
 const reasons = [
-  { icon: MapPin, title: "Local Expertise", desc: "Deep knowledge of Rahmath Nagar and Chennai construction landscape." },
-  { icon: Clock, title: "On-Time Delivery", desc: "We respect your timeline and deliver projects on schedule." },
-  { icon: ShieldCheck, title: "Quality Materials", desc: "Only premium-grade materials for lasting durability and safety." },
-  { icon: IndianRupee, title: "Affordable Pricing", desc: "Competitive rates without compromising on quality standards." },
+  { icon: MapPin, title: "Local Tirunelveli Builders", desc: "Expert construction company in Tirunelveli with deep knowledge of Tamil Nadu building regulations and local materials." },
+  { icon: Clock, title: "On-Time Project Delivery", desc: "Professional house builders in Tirunelveli committed to timely completion of residential and commercial projects." },
+  { icon: ShieldCheck, title: "Premium Quality Construction", desc: "Best construction company using high-grade materials and modern building techniques for durable structures." },
+  { icon: IndianRupee, title: "Budget Home Construction", desc: "Affordable house construction in Tirunelveli and Tamil Nadu with transparent pricing and no hidden costs." },
 ];
 
 const WhyChooseUsSection = () => {

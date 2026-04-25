@@ -9,7 +9,7 @@ const ProjectsSection = () => {
     <section id="projects" className="section-padding bg-background">
       <div ref={ref} className={`container mx-auto ${isVisible ? "animate-fade-up" : "opacity-0"}`}>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-4">
-          Our <span className="text-gold">Projects</span>
+          Construction Projects in <span className="text-gold">Tirunelveli & Tamil Nadu</span>
         </h2>
         <div className="w-16 h-1 bg-gold mx-auto mb-12 rounded-full" />
 

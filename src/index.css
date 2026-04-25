@@ -30,7 +30,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 90%;
+    --border: 0 0% 85%;
     --input: 215 25% 90%;
     --ring: 215 80% 18%;
 
@@ -69,7 +69,7 @@
     --accent-foreground: 215 80% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 215 40% 22%;
+    --border: 0 0% 25%;
     --input: 215 40% 22%;
     --ring: 42 78% 55%;
     --sidebar-background: 240 5.9% 10%;
@@ -103,6 +103,59 @@
     color: hsl(var(--gold));
   }
 
+  /* Remove any blue borders globally */
+  .border-blue-500,
+  .border-blue-400,
+  .border-blue-300,
+  .border-blue-200,
+  .border-blue-100,
+  .border-blue-600,
+  .border-blue-700,
+  .border-blue-800,
+  .border-blue-900 {
+    border-color: transparent !important;
+  }
+
+  /* Remove blue shadows */
+  .shadow-blue-500,
+  .shadow-blue-400,
+  .shadow-blue-300,
+  .shadow-blue-200,
+  .shadow-blue-100,
+  .shadow-blue-600,
+  .shadow-blue-700,
+  .shadow-blue-800,
+  .shadow-blue-900 {
+    box-shadow: none !important;
+  }
+
+  /* Remove blue outlines */
+  .outline-blue-500,
+  .outline-blue-400,
+  .outline-blue-300,
+  .outline-blue-200,
+  .outline-blue-100,
+  .outline-blue-600,
+  .outline-blue-700,
+  .outline-blue-800,
+  .outline-blue-900 {
+    outline: none !important;
+  }
+
+  /* Remove blue rings */
+  .ring-blue-500,
+  .ring-blue-400,
+  .ring-blue-300,
+  .ring-blue-200,
+  .ring-blue-100,
+  .ring-blue-600,
+  .ring-blue-700,
+  .ring-blue-800,
+  .ring-blue-900 {
+    --tw-ring-color: transparent !important;
+  }
+
+  
   .bg-navy {
     background-color: hsl(var(--navy));
   }
@@ -115,6 +168,48 @@
     background-color: hsl(var(--gold));
   }
 
+  /* Specific fix for admin layout */
+  .flex.min-h-screen.bg-muted > div:first-child {
+    border-right: none !important;
+    box-shadow: none !important;
+  }
+
+  .flex.min-h-screen.bg-muted > div:last-child {
+    border-left: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove any borders from admin containers */
+  [class*="Admin"],
+  [class*="admin"],
+  .bg-navy,
+  .bg-muted {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Ultra-specific fix - target exact admin layout */
+  div[class*="flex"][class*="min-h-screen"][class*="bg-muted"] > div {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  div[class*="flex"][class*="min-h-screen"][class*="bg-muted"] > div > div {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Target any element with navy background */
+  div[class*="bg-navy"] {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  
   .border-gold {
     border-color: hsl(var(--gold));
   }
