@@ -12,7 +12,10 @@ const indexContent = fs.readFileSync(indexPath, 'utf8');
 // Create 404.html with redirect script
 const redirectScript = `
     <script>
-      sessionStorage.setItem("redirect", location.pathname);
+      sessionStorage.setItem(
+        "redirect",
+        location.pathname + location.search + location.hash
+      );
       location.replace("/");
     </script>`;
 
