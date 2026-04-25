@@ -3,10 +3,10 @@ import App from "./App.tsx";
 import "./index.css";
 
 // Handle GitHub Pages redirect
-const redirect = sessionStorage.redirect;
-delete sessionStorage.redirect;
-if (redirect && redirect !== location.pathname) {
-  history.replaceState(null, null, redirect);
+const redirect = sessionStorage.getItem("redirect");
+if (redirect) {
+  sessionStorage.removeItem("redirect");
+  window.history.replaceState(null, "", redirect);
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
