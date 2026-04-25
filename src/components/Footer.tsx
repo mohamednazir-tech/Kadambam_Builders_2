@@ -5,9 +5,23 @@ import { getContactContent, defaultContactContent, type ContactContent } from "@
 
 const Footer = () => {
   const [contactContent, setContactContent] = useState<ContactContent>(defaultContactContent);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getContactContent().then((data) => setContactContent(data));
+    const loadContactData = async () => {
+      try {
+        const data = await getContactContent();
+        if (data) {
+          setContactContent(data);
+        }
+      } catch (error) {
+        console.error('Error loading contact data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadContactData();
   }, []);
 
   return (
@@ -45,18 +59,28 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-gold">Contact Info</h4>
             <div className="space-y-3 text-sm text-primary-foreground/60">
-              <p className="flex gap-2">
-                <MapPin size={16} className="shrink-0 mt-0.5 text-gold" /> 
-                Shop No 1, 132A, 1st Street, Rahmath Nagar, Tirunelveli
-              </p>
-              <p className="flex gap-2">
-                <Phone size={16} className="shrink-0 text-gold" /> 
-                {contactContent.phone || '+91 63740 34451'}
-              </p>
-              <p className="flex gap-2">
-                <Mail size={16} className="shrink-0 text-gold" /> 
-                info@kadambambuilders.com
-              </p>
+              {isLoading ? (
+                <div className="space-y-2">
+                  <div className="animate-pulse h-4 bg-primary-foreground/20 rounded"></div>
+                  <div className="animate-pulse h-4 bg-primary-foreground/20 rounded w-3/4"></div>
+                  <div className="animate-pulse h-4 bg-primary-foreground/20 rounded w-2/3"></div>
+                </div>
+              ) : (
+                <>
+                  <p className="flex gap-2">
+                    <MapPin size={16} className="shrink-0 mt-0.5 text-gold" /> 
+                    {contactContent.address || 'Shop No 1, 132A, 1st Street, Rahmath Nagar, Tirunelveli'}
+                  </p>
+                  <p className="flex gap-2">
+                    <Phone size={16} className="shrink-0 text-gold" /> 
+                    {contactContent.phone || '+91 63740 34451'}
+                  </p>
+                  <p className="flex gap-2">
+                    <Mail size={16} className="shrink-0 text-gold" /> 
+                    {contactContent.email || 'info@kadambambuilders.com'}
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>

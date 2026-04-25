@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Save, Eye, EyeOff, Shield } from "lucide-react";
 import { toast } from "sonner";
 import AdminSidebar from "@/components/AdminSidebar";
+import { getCurrentPassword, validateCurrentPassword } from "@/lib/simple-auth";
 
 interface AdminCredentials {
   username: string;
@@ -18,6 +19,8 @@ const EditPasswordPage = () => {
   const [credentials, setCredentials] = useState<AdminCredentials>(defaultCredentials);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,6 +50,12 @@ const EditPasswordPage = () => {
       return;
     }
 
+    // If changing password, validate current password first
+    if (newPassword && !validateCurrentPassword(currentPassword)) {
+      toast.error("Current password is incorrect");
+      return;
+    }
+
     setLoading(true);
 
     if (newPassword) {
@@ -59,6 +68,7 @@ const EditPasswordPage = () => {
       localStorage.setItem("adminAuthTimestamp", Date.now().toString());
       setCredentials(updatedCredentials);
       toast.success("Password updated successfully!");
+      setCurrentPassword(""); // Clear current password field
     } else {
       // Just save current credentials
       localStorage.setItem("adminCredentials", JSON.stringify(credentials));
@@ -66,6 +76,7 @@ const EditPasswordPage = () => {
     }
 
     // Clear form fields
+    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
     setLoading(false);
@@ -128,17 +139,18 @@ const EditPasswordPage = () => {
                 <label className="block text-sm font-medium text-foreground mb-1">Current Password</label>
                 <div className="relative">
                   <input
-                    type={showPassword ? "text" : "password"}
-                    value={credentials.password}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password to change"
                     className="w-full px-4 py-3 pr-12 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-gold"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>

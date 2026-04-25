@@ -3,9 +3,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { getContactContent, defaultContactContent, type ContactContent } from "@/lib/contact";
+import { getGuideContent, defaultGuideContent, type GuideContent } from "@/lib/guide";
 import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Home, Users, Hammer, FileText, MessageSquare } from "lucide-react";
 
-interface GuideContent {
+// Component interface with camelCase fields
+interface GuideData {
   title: string;
   heroDescription: string;
   costBasic: string;
@@ -17,33 +19,45 @@ interface GuideContent {
   timeline: string;
 }
 
-const defaultGuideData: GuideContent = {
-  title: "Building Construction in Tirunelveli: Complete Cost Guide 2026",
-  heroDescription: "Everything you need to know about building a home in Tirunelveli - from costs and materials to construction timeline and legal requirements.",
-  costBasic: "₹1,600 - ₹1,900/sq.ft",
-  costPremium: "₹2,200 - ₹3,000/sq.ft",
-  sampleCalculation: "Construction Cost (₹1,750/sq.ft): ₹21,00,000\nGovernment Approvals & Fees: ₹1,50,000\nInterior Finishes: ₹3,00,000\nTotal Estimated Cost: ₹25,50,000",
-  materials: "Foundation:\n• M20 Grade Concrete\n• Fe500 Steel Bars\n• Waterproof Chemicals\n• Country Bricks (Local)\n\nWalls & Roof:\n• Solid Concrete Blocks\n• Weather-resistant Paint\n• Clay Roof Tiles\n• Heat Insulation\n\nFinishing:\n• Ceramic Tiles\n• Wooden Windows\n• Marine Plywood\n• Anti-corrosive Fittings",
-  legalDocs: "• Parent Document / Sale Deed\n• Encumbrance Certificate\n• Patta and Chitta\n• Approved Building Plan\n• Commencement Certificate\n• Completion Certificate",
-  legalRegs: "• FSI/FAR rules as per DTCP\n• Setback requirements\n• Height restrictions\n• Rainwater harvesting mandatory\n• Septic tank norms\n• Tree plantation requirements",
-  timeline: "1-2 Months: Planning & Approvals\n2-3 Months: Foundation & Structure\n2-3 Months: Finishing Work\n1 Month: Inspection & Handover\n\nTotal: 6-9 Months (For a standard 2BHK house - 1200 sq.ft)"
-};
-
 const HouseConstructionTirunelveli = () => {
-  const [guideData, setGuideData] = useState(defaultGuideData);
+  const [guideData, setGuideData] = useState<GuideData>({
+    title: defaultGuideContent.title,
+    heroDescription: defaultGuideContent.hero_description,
+    costBasic: defaultGuideContent.cost_basic,
+    costPremium: defaultGuideContent.cost_premium,
+    sampleCalculation: defaultGuideContent.sample_calculation,
+    materials: defaultGuideContent.materials,
+    legalDocs: defaultGuideContent.legal_docs,
+    legalRegs: defaultGuideContent.legal_regs,
+    timeline: defaultGuideContent.timeline
+  });
   const [contactData, setContactData] = useState<ContactContent>(defaultContactContent);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Only access localStorage on client-side
-    const savedContent = localStorage.getItem("guideContent");
-    if (savedContent) {
+    // Load guide data from Supabase
+    const loadGuideData = async () => {
       try {
-        setGuideData(JSON.parse(savedContent));
+        const data = await getGuideContent();
+        if (data) {
+          // Map snake_case fields to camelCase for component
+          const mappedData: GuideData = {
+            title: data.title,
+            heroDescription: data.hero_description,
+            costBasic: data.cost_basic,
+            costPremium: data.cost_premium,
+            sampleCalculation: data.sample_calculation,
+            materials: data.materials,
+            legalDocs: data.legal_docs,
+            legalRegs: data.legal_regs,
+            timeline: data.timeline
+          };
+          setGuideData(mappedData);
+        }
       } catch (error) {
-        console.error("Error parsing guide content:", error);
+        console.error('Error loading guide data:', error);
       }
-    }
+    };
 
     // Load contact data from database
     const loadContactData = async () => {
@@ -57,6 +71,7 @@ const HouseConstructionTirunelveli = () => {
       }
     };
 
+    loadGuideData();
     loadContactData();
     setIsLoaded(true);
   }, []);
@@ -287,32 +302,158 @@ const HouseConstructionTirunelveli = () => {
         </section>
 
         {/* Materials Guide */}
-        <section className="section-padding bg-background">
-          <div className="container mx-auto max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
-              Best Materials for Tirunelveli Climate
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-card p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold mb-3 text-gold">Foundation</h3>
-                <pre className="whitespace-pre-line text-sm">
-                  {typeof guideData.materials === 'string' ? guideData.materials.split('\n\n')[0] || '' : ''}
-                </pre>
+        <section className="section-padding bg-gradient-to-br from-slate-50 to-blue-50">
+          <div className="container mx-auto max-w-6xl">
+            {/* Section Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-gold bg-clip-text text-transparent">
+                Best Materials for Tirunelveli Climate
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Specially selected materials that withstand Tirunelveli's tropical climate, 
+                heavy monsoons, and high humidity while ensuring durability and comfort
+              </p>
+            </div>
+
+            {/* Climate Badge */}
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                Tropical Climate Optimized
               </div>
-              
-              <div className="bg-card p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold mb-3 text-gold">Walls & Roof</h3>
-                <pre className="whitespace-pre-line text-sm">
-                  {typeof guideData.materials === 'string' ? guideData.materials.split('\n\n')[1] || '' : ''}
-                </pre>
+            </div>
+
+            {/* Materials Grid */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {/* Foundation Materials */}
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-100">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mb-6 mx-auto">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-center mb-4 text-blue-900">Foundation</h3>
+                  <div className="space-y-3">
+                    {typeof guideData.materials === 'string' && guideData.materials.split('\n\n')[0] ? 
+                      guideData.materials.split('\n\n')[0].split('\n').map((item, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <CheckCircle className="text-blue-600" size={14} />
+                          </div>
+                          <span className="text-sm text-gray-700">{item.replace('•', '').trim()}</span>
+                        </div>
+                      )) : 
+                      <div className="text-sm text-gray-500">Loading foundation materials...</div>
+                    }
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-blue-100">
+                    <div className="flex items-center justify-center gap-2 text-xs text-blue-600 font-medium">
+                      <AlertCircle size={12} />
+                      Resists moisture & soil erosion
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div className="bg-card p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold mb-3 text-gold">Finishing</h3>
-                <pre className="whitespace-pre-line text-sm">
-                  {typeof guideData.materials === 'string' ? guideData.materials.split('\n\n')[2] || '' : ''}
-                </pre>
+
+              {/* Walls & Roof Materials */}
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-green-400 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-green-100">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full mb-6 mx-auto">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                      <Home className="text-green-600" size={16} />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-center mb-4 text-green-900">Walls & Roof</h3>
+                  <div className="space-y-3">
+                    {typeof guideData.materials === 'string' && guideData.materials.split('\n\n')[1] ? 
+                      guideData.materials.split('\n\n')[1].split('\n').map((item, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <CheckCircle className="text-green-600" size={14} />
+                          </div>
+                          <span className="text-sm text-gray-700">{item.replace('•', '').trim()}</span>
+                        </div>
+                      )) : 
+                      <div className="text-sm text-gray-500">Loading wall & roof materials...</div>
+                    }
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-green-100">
+                    <div className="flex items-center justify-center gap-2 text-xs text-green-600 font-medium">
+                      <AlertCircle size={12} />
+                      Heat resistant & waterproof
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Finishing Materials */}
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 to-amber-400 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-100">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full mb-6 mx-auto">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                      <Hammer className="text-amber-600" size={16} />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-center mb-4 text-amber-900">Finishing</h3>
+                  <div className="space-y-3">
+                    {typeof guideData.materials === 'string' && guideData.materials.split('\n\n')[2] ? 
+                      guideData.materials.split('\n\n')[2].split('\n').map((item, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <CheckCircle className="text-amber-600" size={14} />
+                          </div>
+                          <span className="text-sm text-gray-700">{item.replace('•', '').trim()}</span>
+                        </div>
+                      )) : 
+                      <div className="text-sm text-gray-500">Loading finishing materials...</div>
+                    }
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-amber-100">
+                    <div className="flex items-center justify-center gap-2 text-xs text-amber-600 font-medium">
+                      <AlertCircle size={12} />
+                      Durable & humidity resistant
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Climate Benefits Section */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">Why These Materials for Tirunelveli?</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
+                  </div>
+                  <h4 className="font-semibold text-blue-900 mb-2">Heavy Rainfall</h4>
+                  <p className="text-sm text-gray-600">Waterproof materials prevent seepage during monsoons</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-6 h-6 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <h4 className="font-semibold text-orange-900 mb-2">High Temperature</h4>
+                  <p className="text-sm text-gray-600">Heat-resistant materials keep interiors cool</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-6 h-6 bg-green-500 rounded-full"></div>
+                  </div>
+                  <h4 className="font-semibold text-green-900 mb-2">High Humidity</h4>
+                  <p className="text-sm text-gray-600">Anti-fungal materials prevent moisture damage</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-6 h-6 bg-purple-500 rounded-full"></div>
+                  </div>
+                  <h4 className="font-semibold text-purple-900 mb-2">Longevity</h4>
+                  <p className="text-sm text-gray-600">Durable materials withstand tropical climate stress</p>
+                </div>
               </div>
             </div>
           </div>
