@@ -10,11 +10,19 @@ const TestimonialsSection = () => {
   const [form, setForm] = useState({ name: "", text: "", rating: 5 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch testimonials
   const fetchTestimonials = async () => {
-    const data = await getApprovedTestimonials();
-    setTestimonials(data);
+    try {
+      setIsLoading(true);
+      const data = await getApprovedTestimonials();
+      setTestimonials(data);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -84,20 +92,50 @@ const TestimonialsSection = () => {
         </h2>
         <div className="w-16 h-1 bg-gold mx-auto mb-12 rounded-full" />
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {testimonials.map((t) => (
-            <div key={t.id} className="bg-card rounded-lg p-6 shadow-sm">
-              <Quote className="text-gold/30 mb-3" size={32} />
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">"{t.text}"</p>
-              <div className="flex items-center gap-1 mb-2">
-                {[...Array(t.rating || 5)].map((_, i) => (
-                  <Star key={i} className="text-gold fill-gold" size={14} />
-                ))}
+        {isLoading ? (
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-card rounded-lg p-6 shadow-sm">
+                <div className="animate-pulse space-y-3">
+                  <div className="w-8 h-8 bg-muted rounded-full mb-3"></div>
+                  <div className="h-4 bg-muted rounded mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </div>
               </div>
-              <p className="font-semibold text-foreground text-sm">{t.name}</p>
+            ))}
+          </div>
+        ) : testimonials.length > 0 ? (
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {testimonials.map((t) => (
+              <div key={t.id} className="bg-card rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Quote className="text-gold/30 mb-3" size={32} />
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4">"{t.text}"</p>
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(t.rating || 5)].map((_, i) => (
+                    <Star key={i} className="text-gold fill-gold" size={14} />
+                  ))}
+                </div>
+                <p className="font-semibold text-foreground text-sm">{t.name}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 max-w-2xl mx-auto">
+            <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Quote className="text-gold" size={32} />
             </div>
-          ))}
-        </div>
+            <h3 className="text-xl font-semibold text-foreground mb-3">No Reviews Yet</h3>
+            <p className="text-muted-foreground mb-6">
+              Be the first to share your experience with Kadambam Builders! 
+              Your feedback helps us improve and serves our community.
+            </p>
+            <div className="inline-flex items-center gap-2 bg-gold/10 text-gold px-4 py-2 rounded-full text-sm">
+              <Star size={16} className="fill-gold" />
+              <span>Share your experience below</span>
+            </div>
+          </div>
+        )}
 
         {/* Add Review Button */}
         <div className="text-center mt-8">

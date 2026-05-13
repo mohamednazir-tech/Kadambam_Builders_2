@@ -27,7 +27,12 @@ const HeroSection = () => {
       }
     };
 
-    loadContactData();
+    // Load after initial paint for better performance
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => loadContactData());
+    } else {
+      setTimeout(() => loadContactData(), 100);
+    }
   }, []);
 
   useEffect(() => {
@@ -46,6 +51,10 @@ const HeroSection = () => {
           key={index}
           src={img}
           alt={`House construction project ${index + 1} in Tirunelveli by Kadambam Builders`}
+          loading={index === 0 ? "eager" : "lazy"}
+          width={1920}
+          height={1080}
+          decoding="async"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
             index === currentIndex ? "opacity-100" : "opacity-0"
           } brightness-110 contrast-105`}

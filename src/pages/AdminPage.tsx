@@ -10,12 +10,13 @@ import AdminSidebar from "@/components/AdminSidebar";
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [projects, setProjects] = useState<Project[]>(getProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [activeTab, setActiveTab] = useState<'projects' | 'messages'>('projects');
   const [label, setLabel] = useState("");
   const [category, setCategory] = useState("Residential");
   const [preview, setPreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const AdminPage = () => {
     const isAuth = checkAuth();
     if (isAuth) {
       setIsAuthenticated(true);
+      loadProjects();
       loadMessages();
     } else {
       setIsAuthenticated(false);
@@ -32,9 +34,22 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      loadProjects();
       loadMessages();
     }
   }, [isAuthenticated]);
+
+  const loadProjects = async () => {
+    setIsLoading(true);
+    try {
+      const projectsData = await getProjects();
+      setProjects(projectsData);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const loadMessages = async () => {
     const messagesData = await getMessages();
@@ -82,19 +97,21 @@ const AdminPage = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!label.trim() || !preview) return;
-    const updated = addProject({ label: label.trim(), src: preview, category });
-    setProjects(updated);
-    setLabel("");
-    setCategory("Residential");
-    setPreview(null);
-    if (fileRef.current) fileRef.current.value = "";
+    const added = await addProject({ label: label.trim(), src: preview, category });
+    if (added) {
+      await loadProjects();
+      setLabel("");
+      setCategory("Residential");
+      setPreview(null);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   };
 
-  const handleRemove = (id: string) => {
-    const updated = removeProject(id);
+  const handleRemove = async (id: number) => {
+    const updated = await removeProject(id);
     setProjects(updated);
   };
 

@@ -1,9 +1,23 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { getProjects } from "@/lib/projects";
+import { useState, useEffect } from "react";
 
 const ProjectsSection = () => {
   const { ref, isVisible } = useScrollAnimation();
-  const projects = getProjects();
+  const [projects, setProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const data = await getProjects();
+        setProjects(data);
+      } catch (error) {
+        console.error('Error loading projects:', error);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   return (
     <section id="projects" className="section-padding bg-background">
