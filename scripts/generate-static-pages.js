@@ -91,6 +91,9 @@ const houseConstructionHTML = `<!DOCTYPE html>
   <!-- Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- Extract and use the same CSS link from the original index.html -->
+  ${indexContent.match(/<link[^>]*rel="stylesheet"[^>]*>/g)?.join('\n  ') || ''}
 </head>
 <body>
   <!-- Static H1 for SEO crawlers -->
