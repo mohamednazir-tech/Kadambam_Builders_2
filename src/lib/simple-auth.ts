@@ -1,48 +1,47 @@
-// Simple password-only authentication system
-// No email, no username, just password
+import { supabase } from "./supabase";
+import SHA256 from "crypto-js/sha256";
 
-const DEFAULT_ADMIN_PASSWORD = "mohamed1234"; // Fallback password
+export const setAuth = async (password: string): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("admin_config")
+    .select("password_hash")
+    .eq("id", 1)
+    .single();
 
-const getStoredPassword = (): string => {
-  try {
-    const stored = localStorage.getItem("adminAuth");
-    if (stored) {
-      const credentials = JSON.parse(stored);
-      return credentials.password || DEFAULT_ADMIN_PASSWORD;
-    }
-  } catch (error) {
-    console.error('Error reading stored password:', error);
+  if (error || !data) {
+    console.error(error);
+    return false;
   }
-  return DEFAULT_ADMIN_PASSWORD;
-};
 
-export const simpleLogin = (password: string): boolean => {
-  const storedPassword = getStoredPassword();
-  return password === storedPassword;
-};
+  const hash = SHA256(password).toString();
 
-export const checkAuth = (): boolean => {
-  return sessionStorage.getItem('adminAuthenticated') === 'true';
-};
-
-export const setAuth = (password: string): boolean => {
-  const isValid = simpleLogin(password);
-  if (isValid) {
-    sessionStorage.setItem('adminAuthenticated', 'true');
-    sessionStorage.setItem('loginTime', Date.now().toString());
+  if (hash === data.password_hash) {
+    sessionStorage.setItem("adminAuthenticated", "true");
+    return true;
   }
-  return isValid;
+
+  return false;
 };
 
-export const clearAuth = (): void => {
-  sessionStorage.removeItem('adminAuthenticated');
-  sessionStorage.removeItem('loginTime');
+export const checkAuth = () => {
+  return sessionStorage.getItem("adminAuthenticated") === "true";
 };
 
-export const validateCurrentPassword = (password: string): boolean => {
-  return simpleLogin(password);
+export const clearAuth = () => {
+  sessionStorage.removeItem("adminAuthenticated");
 };
+export const validateCurrentPassword = async (
+  password: string
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("admin_config")
+    .select("password_hash")
+    .eq("id", 1)
+    .single();
 
-export const getCurrentPassword = (): string => {
-  return getStoredPassword();
+  if (error || !data) {
+    return false;
+  }
+
+  return SHA256(password).toString() === data.password_hash;
 };

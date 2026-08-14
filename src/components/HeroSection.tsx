@@ -44,13 +44,13 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen w-full overflow-hidden">
+    <section id="home" aria-label="Hero Section" className="relative min-h-screen w-full overflow-hidden">
       {/* Background Images */}
       {images.map((img, index) => (
         <img
           key={index}
           src={img}
-          alt={`House construction project ${index + 1} in Tirunelveli by Kadambam Builders`}
+          alt={`House construction project ${index + 1} in Tirunelveli by Kadambam Builders - Residential and commercial building`}
           loading={index === 0 ? "eager" : "lazy"}
           width={1920}
           height={1080}
@@ -62,7 +62,7 @@ const HeroSection = () => {
       ))}
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-navy-dark/40" />
+      <div className="absolute inset-0 bg-navy-dark/40" aria-hidden="true" />
 
       {/* Content */}
       <div className="relative z-10 flex items-start md:items-center justify-center min-h-screen px-4 pt-20 md:pt-0">
@@ -84,10 +84,11 @@ const HeroSection = () => {
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.4s" }}>
+          <nav className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.4s" }} aria-label="Hero Navigation">
             <a
               href={`tel:${contactData.phone.replace(/\s/g, '')}`}
               className="w-full sm:w-auto bg-gold text-black px-6 sm:px-8 py-3 sm:py-4 rounded-md text-sm sm:text-base font-semibold text-center min-h-[44px] flex items-center justify-center gap-2 hover:brightness-110 transition"
+              aria-label="Call Kadambam Builders"
             >
               <Phone size={16} /> Call Now
             </a>
@@ -95,6 +96,7 @@ const HeroSection = () => {
             <a
               href="/house-construction-tirunelveli"
               className="w-full sm:w-auto border border-gold text-gold px-6 sm:px-8 py-3 sm:py-4 rounded-md text-sm sm:text-base font-semibold text-center min-h-[44px] flex items-center justify-center gap-2 hover:bg-gold hover:text-black transition"
+              aria-label="View complete house construction guide for Tirunelveli"
             >
               <FileText size={16} /> View Complete Guide
             </a>
@@ -102,10 +104,11 @@ const HeroSection = () => {
             <a
               href="#contact"
               className="w-full sm:w-auto bg-gold text-black px-6 sm:px-8 py-3 sm:py-4 rounded-md text-sm sm:text-base font-semibold text-center min-h-[44px] flex items-center justify-center hover:brightness-110 transition"
+              aria-label="Get free construction quote"
             >
               Get Free Quote
             </a>
-          </div>
+          </nav>
         </div>
       </div>
     </section>

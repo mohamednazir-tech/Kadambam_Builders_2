@@ -5,6 +5,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { getContactContent, defaultContactContent, type ContactContent } from "@/lib/contact";
 import { getGuideContent, defaultGuideContent, type GuideContent } from "@/lib/guide";
 import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Home, Users, Hammer, FileText, MessageSquare } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 // Component interface with camelCase fields
 interface GuideData {
@@ -91,6 +92,41 @@ const HouseConstructionTirunelveli = () => {
   return (
     <>
       <Header />
+      <Helmet>
+  <title>House Construction in Tirunelveli | Kadambam Builders</title>
+
+  <meta
+    name="description"
+    content="House construction services in Tirunelveli by Kadambam Builders. We provide residential house construction, villa construction, turnkey projects, renovation, and building consultation."
+  />
+
+  <meta
+    name="keywords"
+    content="House Construction Tirunelveli, House Builders Tirunelveli, Home Construction Tirunelveli, Residential Construction Tirunelveli, Kadambam Builders"
+  />
+
+  <link
+    rel="canonical"
+    href="https://kadambambuilders.com/house-construction-tirunelveli"
+  />
+
+  <meta
+    property="og:title"
+    content="House Construction in Tirunelveli | Kadambam Builders"
+  />
+
+  <meta
+    property="og:description"
+    content="Looking for house construction in Tirunelveli? Kadambam Builders offers quality residential construction and turnkey building services."
+  />
+
+  <meta
+    property="og:url"
+    content="https://kadambambuilders.com/house-construction-tirunelveli"
+  />
+
+  <meta property="og:type" content="article" />
+</Helmet>
       <main className="min-h-screen">
         {/* Hero Section */}
         <section className="section-padding bg-navy text-primary-foreground">

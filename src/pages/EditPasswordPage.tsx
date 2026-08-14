@@ -1,22 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Save, Eye, EyeOff, Shield } from "lucide-react";
 import { toast } from "sonner";
 import AdminSidebar from "@/components/AdminSidebar";
-import { getCurrentPassword, validateCurrentPassword } from "@/lib/simple-auth";
+import { validateCurrentPassword } from "@/lib/simple-auth";
 
-interface AdminCredentials {
-  username: string;
-  password: string;
-}
+import SHA256 from "crypto-js/sha256";
+import { supabase } from "@/lib/supabase";
 
-const defaultCredentials: AdminCredentials = {
-  username: "admin",
-  password: "mohamed1234"
-};
+
+
+const defaultUsername = "admin";
 
 const EditPasswordPage = () => {
-  const [credentials, setCredentials] = useState<AdminCredentials>(defaultCredentials);
+  const [username, setUsername] = useState("admin");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -26,19 +22,9 @@ const EditPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState("");
 
-  useEffect(() => {
-    const saved = localStorage.getItem("adminAuth");
-    const savedTimestamp = localStorage.getItem("adminAuthTimestamp");
-    
-    if (saved) {
-      setCredentials(JSON.parse(saved));
-      if (savedTimestamp) {
-        setLastUpdated(new Date(parseInt(savedTimestamp)).toLocaleString());
-      }
-    }
-  }, []);
+  
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Validation
     if (newPassword && newPassword.length < 6) {
       toast.error("Password must be at least 6 characters long");
@@ -51,29 +37,43 @@ const EditPasswordPage = () => {
     }
 
     // If changing password, validate current password first
-    if (newPassword && !validateCurrentPassword(currentPassword)) {
-      toast.error("Current password is incorrect");
-      return;
-    }
+    if (
+  newPassword &&
+  !(await validateCurrentPassword(currentPassword))
+) {
+  toast.error("Current password is incorrect");
+  return;
+}
 
     setLoading(true);
 
     if (newPassword) {
-      // Update password
-      const updatedCredentials = {
-        ...credentials,
-        password: newPassword
-      };
-      localStorage.setItem("adminAuth", JSON.stringify(updatedCredentials));
-      localStorage.setItem("adminAuthTimestamp", Date.now().toString());
-      setCredentials(updatedCredentials);
-      toast.success("Password updated successfully!");
-      setCurrentPassword(""); // Clear current password field
-    } else {
-      // Just save current credentials
-      localStorage.setItem("adminCredentials", JSON.stringify(credentials));
-      toast.success("Credentials saved successfully!");
-    }
+
+  // Convert password to SHA-256 hash
+  const hash = SHA256(newPassword).toString();
+
+  // Save hash in Supabase
+  const { error } = await supabase
+    .from("admin_config")
+    .update({
+      password_hash: hash,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", 1);
+
+  if (error) {
+    toast.error("Failed to update password");
+    console.error(error);
+    setLoading(false);
+    return;
+  }
+
+  toast.success("Password updated successfully!");
+
+  setCurrentPassword("");
+} else {
+  toast.info("No password changes to save.");
+}
 
     // Clear form fields
     setCurrentPassword("");
@@ -82,18 +82,28 @@ const EditPasswordPage = () => {
     setLoading(false);
   };
 
-  const handleReset = () => {
-    if (confirm("Are you sure you want to reset to default credentials? (admin/admin123)")) {
-      setCredentials(defaultCredentials);
-      localStorage.setItem("adminCredentials", JSON.stringify(defaultCredentials));
-      localStorage.removeItem("adminCredentialsTimestamp");
-      setNewPassword("");
-      setConfirmPassword("");
-      setLastUpdated("");
-      toast.info("Reset to default credentials");
-    }
-  };
+ const handleReset = async () => {
 
+  if (!confirm("Reset password to mohamed1234?")) return;
+
+  const hash = SHA256("mohamed1234").toString();
+
+  const { error } = await supabase
+    .from("admin_config")
+    .update({
+      password_hash: hash,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", 1);
+
+  if (error) {
+    toast.error("Reset failed");
+    console.error(error);
+    return;
+  }
+
+  toast.success("Password reset successfully");
+};
   return (
     <div className="flex min-h-screen bg-muted">
       <AdminSidebar />
@@ -129,8 +139,8 @@ const EditPasswordPage = () => {
                 <label className="block text-sm font-medium text-foreground mb-1">Username</label>
                 <input
                   type="text"
-                  value={credentials.username}
-                  onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                  value={username}
+onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-3 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-gold"
                 />
               </div>
