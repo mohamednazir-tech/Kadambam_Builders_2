@@ -21,8 +21,8 @@ export default defineConfig(({ mode }) => ({
       optipng: { optimizationLevel: 7 },
       mozjpeg: { quality: 75, progressive: true },
       pngquant: { quality: [0.65, 0.9], speed: 4 },
-      svgo: { plugins: [{ removeViewBox: false }] },
-      webp: { quality: 75 }
+      webp: { quality: 75 },
+      svgo: false
     })
   ].filter(Boolean),
   resolve: {
